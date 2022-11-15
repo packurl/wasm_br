@@ -1,0 +1,20 @@
+[package]
+name = "br"
+version = "0.1.0"
+authors = ["programingjd"]
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib","rlib"]
+
+[dependencies.wasm-bindgen]
+version = "0.2"
+
+[dependencies.brotli]
+version = "3.3"
+features=["std","disable-timer","simd"]
+default-features=false
+
+[profile.release]
+opt-level = "s"
+lto = true
