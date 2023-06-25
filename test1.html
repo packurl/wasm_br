@@ -20,6 +20,9 @@ main>div{height:2rem}
   <div></div>
   <div></div>
   <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
 </main>
 </body>
 <script type="module">
@@ -30,26 +33,45 @@ const original=new Uint8Array(10_000);
 crypto.getRandomValues(original);
 divs[0].textContent+='done';
 divs[1].textContent='Initializing compressor... ';
-const {br,unbr}=await mod;
+const {brBest,brFast,unbr}=await mod;
 divs[1].textContent+='done';
-divs[2].textContent='Compressing... ';
-const compressed=await br(original);
-divs[2].textContent+=`done (${compressed.byteLength} B)`;
+divs[2].textContent='Compressing best quality... ';
+const compressedBest=await brBest(original);
+divs[2].textContent+=`done (${compressedBest.byteLength} B)`;
 divs[3].textContent='Decompressing... ';
-const decompressed=await unbr(compressed);
-divs[3].textContent+=`done (${decompressed.byteLength} B)`;
+const decompressedBest=await unbr(compressedBest);
+divs[3].textContent+=`done (${compressedBest.byteLength} B)`;
 divs[4].textContent='Comparing... ';
-const len=decompressed.byteLength;
-let same=len===10_000;
-if(same){
-  for(let i=0;i<len;++i){
-    if(decompressed[i]!==original[i]){
+const lenBest=decompressedBest.byteLength;
+let sameBest=lenBest===10_000;
+if(sameBest){
+  for(let i=0;i<lenBest;++i){
+    if(decompressedBest[i]!==original[i]){
       console.log(i);
-      same=false;
+      sameBest=false;
       break;
     }
   }
 }
-divs[4].innerHTML+=same?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
+divs[4].innerHTML+=sameBest?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
+divs[5].textContent='Compressing fast... ';
+const compressedFast=await brFast(original);
+divs[5].textContent+=`done (${compressedFast.byteLength} B)`;
+divs[6].textContent='Decompressing... ';
+const decompressedFast=await unbr(compressedFast);
+divs[6].textContent+=`done (${decompressedFast.byteLength} B)`;
+divs[7].textContent='Comparing... ';
+const lenFast=decompressedFast.byteLength;
+let sameFast=lenFast===10_000;
+if(sameFast){
+  for(let i=0;i<lenFast;++i){
+    if(decompressedFast[i]!==original[i]){
+      console.log(i);
+      sameFast=false;
+      break;
+    }
+  }
+}
+divs[7].innerHTML+=sameFast?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
 </script>
 </html>

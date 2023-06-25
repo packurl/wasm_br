@@ -1,20 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Test</title>
-  <style>
-    *{margin:0;padding:0;box-sizing:border-box}
-    html{height:100%;font:4vmin monospace;background:#222;color:#eee}
-    body{min-height:100%;padding:1rem;display:grid;place-items:center}
-    main{display:flex;flex-direction:column}
-    main>div{height:2rem}
-    .ok{color:green}
-    .ko{color:red}
-  </style>
+<meta charset="UTF-8">
+<title>Test</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{height:100%;font:4vmin monospace;background:#222;color:#eee}
+  body{min-height:100%;padding:1rem;display:grid;place-items:center}
+  main{display:flex;flex-direction:column}
+  main>div{height:2rem}
+  .ok{color:green}
+  .ko{color:red}
+</style>
 </head>
 <body>
 <main>
+  <div></div>
+  <div></div>
+  <div></div>
+  <div></div>
   <div></div>
   <div></div>
   <div></div>
@@ -36,29 +40,51 @@ const key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['enc
 const encrypted=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,original));
 divs[1].textContent+='done';
 divs[2].textContent='Initializing compressor... ';
-const {br,unbr}=await mod;
+const {brBest,brFast,unbr}=await mod;
 divs[2].textContent+='done';
-divs[3].textContent='Compressing... ';
-const compressed=await br(encrypted);
-divs[3].textContent+=`done (${compressed.byteLength} B)`;
+divs[3].textContent='Compressing best quality... ';
+const compressedBest=await brBest(encrypted);
+divs[3].textContent+=`done (${compressedBest.byteLength} B)`;
 divs[4].textContent='Decompressing... ';
-const decompressed=await unbr(compressed);
-divs[4].textContent+=`done (${decompressed.byteLength} B)`;
+const decompressedBest=await unbr(compressedBest);
+divs[4].textContent+=`done (${decompressedBest.byteLength} B)`;
 divs[5].textContent='Decrypting... ';
-const decrypted=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,decompressed));
+const decryptedBest=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,decompressedBest));
 divs[5].textContent+=`done`;
 divs[6].textContent='Comparing... ';
-const len=decrypted.byteLength;
-let same=len===original.byteLength;
-if(same){
-  for(let i=0;i<len;++i){
-    if(decrypted[i]!==original[i]){
+const lenBest=decryptedBest.byteLength;
+let sameBest=lenBest===original.byteLength;
+if(sameBest){
+  for(let i=0;i<lenBest;++i){
+    if(decryptedBest[i]!==original[i]){
       console.log(i);
-      same=false;
+      sameBest=false;
       break;
     }
   }
 }
-divs[6].innerHTML+=same?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
+divs[6].innerHTML+=sameBest?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
+divs[7].textContent='Compressing fast... ';
+const compressedFast=await brFast(encrypted);
+divs[7].textContent+=`done (${compressedFast.byteLength} B)`;
+divs[8].textContent='Decompressing... ';
+const decompressedFast=await unbr(compressedFast);
+divs[8].textContent+=`done (${decompressedFast.byteLength} B)`;
+divs[9].textContent='Decrypting... ';
+const decryptedFast=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,decompressedFast));
+divs[9].textContent+=`done`;
+divs[10].textContent='Comparing... ';
+const lenFast=decryptedFast.byteLength;
+let sameFast=lenFast===original.byteLength;
+if(sameFast){
+  for(let i=0;i<lenFast;++i){
+    if(decryptedFast[i]!==original[i]){
+      console.log(i);
+      sameFast=false;
+      break;
+    }
+  }
+}
+divs[10].innerHTML+=sameFast?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
 </script>
 </html>
