@@ -5,7 +5,7 @@
 <title>Test</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-html{height:100%;font:4vmin monospace;background:#222;color:#eee}
+html{height:100%;font:3vmin monospace;background:#222;color:#eee}
 body{min-height:100%;padding:1rem;display:grid;place-items:center}
 main{display:flex;flex-direction:column}
 main>div{height:2rem}
@@ -26,17 +26,17 @@ main>div{height:2rem}
 </main>
 </body>
 <script type="module">
-const mod=import('./brotli.mjs');
+const mod=import('./brotli_worker.mjs');
 const divs=[...document.querySelectorAll('main>div')];
 divs[0].textContent='Generating 10 kiB of data...';
 const original=new Uint8Array(10_000);
 crypto.getRandomValues(original);
 divs[0].textContent+='done';
 divs[1].textContent='Initializing compressor... ';
-const {brBest,brFast,unbr}=await mod;
+const {br,unbr}=await mod;
 divs[1].textContent+='done';
 divs[2].textContent='Compressing best quality... ';
-const compressedBest=await brBest(original);
+const compressedBest=await br(original,11);
 divs[2].textContent+=`done (${compressedBest.byteLength} B)`;
 divs[3].textContent='Decompressing... ';
 const decompressedBest=await unbr(compressedBest);
@@ -55,7 +55,7 @@ if(sameBest){
 }
 divs[4].innerHTML+=sameBest?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
 divs[5].textContent='Compressing fast... ';
-const compressedFast=await brFast(original);
+const compressedFast=await br(original,1);
 divs[5].textContent+=`done (${compressedFast.byteLength} B)`;
 divs[6].textContent='Decompressing... ';
 const decompressedFast=await unbr(compressedFast);

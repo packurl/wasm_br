@@ -6,7 +6,7 @@
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html{height:100%;font:4vmin monospace;background:#222;color:#eee}
-body{min-height:100%;padding:1rem;display:grid;place-items:center}
+body{min-height:100%;padding:1rem;display:grid;place-items:center;grid-template-columns:auto}
 main{text-align:center}
 body.dragover::before{
   content:'';
@@ -41,7 +41,28 @@ main.busy::before{
 <main></main>
 </body>
 <script type="module">
-const {br}=await import('./brotli_enc_worker.mjs');
+const url=new URL('brotli_enc.wasm',import.meta.url);
+await (await fetch(url)).arrayBuffer();
+const levels=[0,1,2,3,4,5,6,7,8,9,10,11];
+const br=async(bytes,level)=>{
+  const worker=new Worker(new URL('./brotli_enc_worker_script.mjs',import.meta.url),{type:'module'});
+  await new Promise(r=>worker.onmessage=msg=>{
+    if(msg.data==='ready'){
+      worker.onmessage=null;
+      r(worker);
+    }
+  });
+  const t=Date.now();
+  const compressed=await new Promise(r=>{
+    worker.onmessage=msg=>{
+      worker.onmessage=null;
+      r(msg.data);
+      worker.terminate();
+    }
+    worker.postMessage({bytes,level});
+  });
+  return {duration:Date.now()-t,bytes:compressed};
+};
 const main=document.querySelector('main');
 main.classList.add('ready');
 ['dragenter','dragover','dragleave','drop'].forEach(it=>{
@@ -65,22 +86,28 @@ const dropListener=async e=>{
   window.removeEventListener('dragover',dragListener);
   window.removeEventListener('drop',dropListener);
   const file=e.dataTransfer.files.item(0);
-  const compressed=await br(await read(file),1);
-  const a=document.createElement('a');
-  a.addEventListener('click',e=>{
-    e.preventDefault();
-    e.stopPropagation();
-    const url=URL.createObjectURL(new Blob([compressed],{type:'octet/stream'}));
-    a.href=url;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),10_000);
-  });
-  a.href=''
-  a.download=`${file.name}.br`;
-  a.innerHTML=`${file.name}.br`;
+  for(const level of levels){
+    console.log(level);
+    const {duration,bytes:compressed}=await br(await read(file),level);
+    const div=document.createElement('div');
+    const a=document.createElement('a');
+    a.addEventListener('click',e=>{
+      e.preventDefault();
+      e.stopPropagation();
+      const url=URL.createObjectURL(new Blob([compressed],{type:'octet/stream'}));
+      a.href=url;
+      a.click();
+      setTimeout(()=>URL.revokeObjectURL(url),10_000);
+    });
+    a.href='';
+    a.download=`${file.name}_${level}.br`;
+    a.innerHTML=`${file.name}_${level}.br`;
+    div.appendChild(a);
+    const spacer=level<10?'\xa0':'';
+    div.innerHTML+=` ${spacer}${compressed.byteLength.toString().padStart(10,'\xa0')} B, compressed in ${(duration/1000).toPrecision(3).padStart(6,'\xa0')} s`;
+    main.appendChild(div);
+  }
   main.classList.remove('busy');
-  main.appendChild(a);
-  main.innerHTML+=`<br>(${compressed.byteLength} B)`;
   window.addEventListener('dragover',dragListener,false);
   window.addEventListener('drop',dropListener,false);
 };

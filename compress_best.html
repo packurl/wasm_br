@@ -41,7 +41,8 @@ main.busy::before{
 <main></main>
 </body>
 <script type="module">
-const {brBest:br}=await import('./brotli.mjs');
+import br from './brotli_enc_worker.mjs';
+import unbr from './brotli_dec_worker.mjs';
 const main=document.querySelector('main');
 main.classList.add('ready');
 ['dragenter','dragover','dragleave','drop'].forEach(it=>{
@@ -66,9 +67,23 @@ const dropListener=async e=>{
   window.removeEventListener('drop',dropListener);
   const file=e.dataTransfer.files.item(0);
   console.log(file.size);
-  const compressed=await br(await read(file));
+  const uncompressed=await read(file);
+  const hash=new Uint8Array(await crypto.subtle.digest('SHA-256',uncompressed));
+  const compressed=await br(uncompressed,11);
+  const decompressed=await unbr(compressed);
+  new Uint8Array(await crypto.subtle.digest('SHA-256',decompressed)).forEach((it,i)=>{
+    if(it!==hash[i]) throw new Error('Verification failed.');
+  });
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([compressed],{type:'octet/stream'}));
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    const url=URL.createObjectURL(new Blob([compressed],{type:'octet/stream'}));
+    a.href=url;
+    a.click();
+    setTimeout(()=>URL.revokeObjectURL(url),10_000);
+  });
+  a.href='';
   a.download=`${file.name}.br`;
   a.innerHTML=`${file.name}.br`;
   main.classList.remove('busy');
