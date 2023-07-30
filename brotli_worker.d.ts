@@ -1,6 +1,6 @@
 /* tslint:disable */
 /* eslint-disable */
-declare module 'brotli_dec_worker' {
+declare module 'brotli_worker' {
   export type CompressionLevel = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11;
   /**
    * Compresses an array of bytes with Brotli.
