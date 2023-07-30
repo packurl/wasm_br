@@ -66,16 +66,15 @@ const dropListener=async e=>{
   window.removeEventListener('drop',dropListener);
   const file=e.dataTransfer.files.item(0);
   const compressed=await br(await read(file),1);
-  const a=document.createElement('a');
-  a.addEventListener('click',e=>{
-    e.preventDefault();
-    e.stopPropagation();
-    const url=URL.createObjectURL(new Blob([compressed],{type:'octet/stream'}));
-    a.href=url;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(url),10_000);
+  const blob=new Blob([compressed],{type:'octet/stream'});
+  const url=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.addEventListener('load',e=>resolve(e.target.result));
+    reader.addEventListener('error',reject);
+    reader.readAsDataURL(blob);
   });
-  a.href=''
+  const a=document.createElement('a');
+  a.href=url;
   a.download=`${file.name}.br`;
   a.innerHTML=`${file.name}.br`;
   main.classList.remove('busy');

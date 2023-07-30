@@ -89,17 +89,16 @@ const dropListener=async e=>{
   for(const level of levels){
     console.log(level);
     const {duration,bytes:compressed}=await br(await read(file),level);
+    const blob=new Blob([compressed],{type:'octet/stream'});
+    const url=await new Promise((resolve,reject)=>{
+      const reader=new FileReader();
+      reader.addEventListener('load',e=>resolve(e.target.result));
+      reader.addEventListener('error',reject);
+      reader.readAsDataURL(blob);
+    });
     const div=document.createElement('div');
     const a=document.createElement('a');
-    a.addEventListener('click',e=>{
-      e.preventDefault();
-      e.stopPropagation();
-      const url=URL.createObjectURL(new Blob([compressed],{type:'octet/stream'}));
-      a.href=url;
-      a.click();
-      setTimeout(()=>URL.revokeObjectURL(url),10_000);
-    });
-    a.href='';
+    a.href=url;
     a.download=`${file.name}_${level}.br`;
     a.innerHTML=`${file.name}_${level}.br`;
     div.appendChild(a);

@@ -66,8 +66,15 @@ const dropListener=async e=>{
   window.removeEventListener('drop',dropListener);
   const file=e.dataTransfer.files.item(0);
   const decompressed=await unbr(await read(file));
+  const blob=new Blob([decompressed],{type:'octet/stream'});
+  const url=await new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.addEventListener('load',e=>resolve(e.target.result));
+    reader.addEventListener('error',reject);
+    reader.readAsDataURL(blob);
+  });
   const a=document.createElement('a');
-  a.href=URL.createObjectURL(new Blob([decompressed],{type:'octet/stream'}));
+  a.href=url;
   const name=file.name.replace(/[.]br$/,'');
   a.download=a.innerHTML=name;
   main.classList.remove('busy');
