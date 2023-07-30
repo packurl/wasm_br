@@ -18,7 +18,7 @@ Dependencies:
 
 **Remarks:**
   
-- Level 7 or 8 seem to be the best when compression times area important.
+- Level 7 or 8 seem to be the best when compression times are important.
 - Level 9 sometimes gives worse ratios that 7 or 8 (this is the case when compressing `brotli.wasm` or `brotli_enc.wasm` for instance)
-- Level 10 canonical be slower than level 11 (again, that's the case on `brotli.wasm` or `brotli_enc.wasm`).
-- Level 11 always gives better ratios, and sometimes by a lot.
+- Level 10 can be slower than level 11 (again, that's the case on `brotli.wasm` or `brotli_enc.wasm`).
+- Level 11 always gives better ratios, and sometimes by a lot, but with much longer compression times than level 9.
