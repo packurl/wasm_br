@@ -32,16 +32,16 @@ divs[0].textContent='Generating 10 kiB of data...';
 const original=new Uint8Array(10_000);
 crypto.getRandomValues(original);
 divs[0].textContent+='done';
-divs[1].textContent='Initializing compressor... ';
+divs[1].textContent='Initializing compressor...';
 const {br,unbr}=await mod;
 divs[1].textContent+='done';
-divs[2].textContent='Compressing best quality... ';
+divs[2].textContent='Compressing best quality...';
 const compressedBest=await br(original,11);
 divs[2].textContent+=`done (${compressedBest.byteLength} B)`;
-divs[3].textContent='Decompressing... ';
+divs[3].textContent='Decompressing...';
 const decompressedBest=await unbr(compressedBest);
 divs[3].textContent+=`done (${compressedBest.byteLength} B)`;
-divs[4].textContent='Comparing... ';
+divs[4].textContent='Comparing...';
 const lenBest=decompressedBest.byteLength;
 let sameBest=lenBest===10_000;
 if(sameBest){
@@ -54,13 +54,13 @@ if(sameBest){
   }
 }
 divs[4].innerHTML+=sameBest?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
-divs[5].textContent='Compressing fast... ';
+divs[5].textContent='Compressing fast...';
 const compressedFast=await br(original,1);
 divs[5].textContent+=`done (${compressedFast.byteLength} B)`;
-divs[6].textContent='Decompressing... ';
+divs[6].textContent='Decompressing...';
 const decompressedFast=await unbr(compressedFast);
 divs[6].textContent+=`done (${decompressedFast.byteLength} B)`;
-divs[7].textContent='Comparing... ';
+divs[7].textContent='Comparing...';
 const lenFast=decompressedFast.byteLength;
 let sameFast=lenFast===10_000;
 if(sameFast){

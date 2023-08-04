@@ -39,19 +39,19 @@ const iv=crypto.getRandomValues(new Uint8Array(12));
 const key=await crypto.subtle.generateKey({name:'AES-GCM',length:256},true,['encrypt','decrypt']);
 const encrypted=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,original));
 divs[1].textContent+='done';
-divs[2].textContent='Initializing compressor... ';
+divs[2].textContent='Initializing compressor...';
 const {br,unbr}=await mod;
 divs[2].textContent+='done';
-divs[3].textContent='Compressing best quality... ';
+divs[3].textContent='Compressing best quality...';
 const compressedBest=await br(encrypted,11);
 divs[3].textContent+=`done (${compressedBest.byteLength} B)`;
-divs[4].textContent='Decompressing... ';
+divs[4].textContent='Decompressing...';
 const decompressedBest=await unbr(compressedBest);
 divs[4].textContent+=`done (${decompressedBest.byteLength} B)`;
-divs[5].textContent='Decrypting... ';
+divs[5].textContent='Decrypting...';
 const decryptedBest=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,decompressedBest));
 divs[5].textContent+=`done`;
-divs[6].textContent='Comparing... ';
+divs[6].textContent='Comparing...';
 const lenBest=decryptedBest.byteLength;
 let sameBest=lenBest===original.byteLength;
 if(sameBest){
@@ -64,16 +64,16 @@ if(sameBest){
   }
 }
 divs[6].innerHTML+=sameBest?'<span class="ok">identical</span>':'<span class="ko">not identical</span>';
-divs[7].textContent='Compressing fast... ';
+divs[7].textContent='Compressing fast...';
 const compressedFast=await br(encrypted,1);
 divs[7].textContent+=`done (${compressedFast.byteLength} B)`;
-divs[8].textContent='Decompressing... ';
+divs[8].textContent='Decompressing...';
 const decompressedFast=await unbr(compressedFast);
 divs[8].textContent+=`done (${decompressedFast.byteLength} B)`;
-divs[9].textContent='Decrypting... ';
+divs[9].textContent='Decrypting...';
 const decryptedFast=new Uint8Array(await crypto.subtle.decrypt({name:'AES-GCM',iv},key,decompressedFast));
 divs[9].textContent+=`done`;
-divs[10].textContent='Comparing... ';
+divs[10].textContent='Comparing...';
 const lenFast=decryptedFast.byteLength;
 let sameFast=lenFast===original.byteLength;
 if(sameFast){
