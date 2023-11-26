@@ -11,7 +11,8 @@ crate-type = ["cdylib","rlib"]
 version = "0.2"
 
 [dependencies.brotli]
-version = "3.3"
+#version = "3.4"
+git = "https://github.com/programingjd/rust-brotli.git"
 features=["std","disable-timer","simd"]
 default-features=false
 
