@@ -1,6 +1,6 @@
 [package]
 name = "br"
-version = "0.7.0"
+version = "0.9.0"
 authors = ["programingjd"]
 edition = "2021"
 
@@ -11,10 +11,9 @@ crate-type = ["cdylib","rlib"]
 version = "0.2"
 
 [dependencies.brotli]
-#version = "3.4"
-git = "https://github.com/programingjd/rust-brotli.git"
-features=["std","disable-timer","simd"]
+version = "4.0"
 default-features=false
+features=["std","disable-timer","simd"]
 
 [profile.release]
 opt-level = "s"

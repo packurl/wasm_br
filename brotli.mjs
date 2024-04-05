@@ -1,4 +1,4 @@
-const url=new URL('./brotli.wasm',import.meta.url);
+const url=new URL('brotli.wasm',import.meta.url);
 const {instance:{exports:wasm}}=await WebAssembly.instantiateStreaming(await fetch(url,{cache:'force-cache'}),{wbg:{}});
 const malloc=wasm.__wbindgen_malloc;
 const free=wasm.__wbindgen_free;
