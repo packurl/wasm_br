@@ -1,8 +1,27 @@
 [package]
 name = "br"
 version = "0.12.0"
-authors = ["programingjd"]
 edition = "2024"
+authors = ["Jerome David <programingjd@gmail.com>"]
+categories = ["wasm","compression"]
+description = "esm modules for brotli compression and/or decompression, with sync and async (worker) versions"
+keywords = ["wasm", "brotli", "br", "esm"]
+license = "GPL-3"
+repository = "https://github.com/packurl/wasm_br"
+include = [
+    "Cargo.toml", "src", "LICENSE", "README.md", "rust-toolchain.toml",
+    "brotli.d.ts", "brotli.mjs", "brotli.wasm",
+    "brotli_worker.d.ts", "brotli_worker.mjs", "brotli_worker_script.mjs",
+    "brotli_worker_script.js", "brotli_for_importScript.mjs",
+    "brotli_enc.d.ts", "brotli_enc.mjs", "brotli_enc.wasm",
+    "brotli_enc_worker_enc.d.ts", "brotli_enc_worker_enc.mjs", "brotli_enc_worker_script.mjs",
+    "brotli_enc_worker_script.js", "brotli_enc_for_importScript.mjs",
+    "brotli_dec.d.ts", "brotli_dec.mjs", "brotli_dec.wasm",
+    "brotli_dec_worker.d.ts", "brotli_dec_worker.mjs", "brotli_dec_worker_script.mjs",
+    "brotli_dec_worker_script.js", "brotli_dec_for_importScript.mjs",
+    "test1.html", "test2.html", "test3.html",
+    "compress_best.html", "compress_compare.html", "compress_fast.html", "decompress.html"
+]
 
 [lib]
 crate-type = ["cdylib", "rlib"]
