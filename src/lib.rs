@@ -1,6 +1,6 @@
-use brotli::BrotliCompress;
+// use brotli::BrotliCompress;
 use brotli::BrotliDecompress;
-use brotli::enc::BrotliEncoderParams;
+// use brotli::enc::BrotliEncoderParams;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
@@ -9,7 +9,7 @@ pub fn unbr(data: &[u8]) -> Vec<u8> {
     BrotliDecompress(&mut &*data, &mut out).unwrap();
     out
 }
-
+/*
 #[wasm_bindgen]
 pub fn br(data: &[u8], quality: i32) -> Vec<u8> {
     let mut out = Vec::with_capacity(data.len() + 64);
@@ -28,3 +28,4 @@ pub fn br(data: &[u8], quality: i32) -> Vec<u8> {
     BrotliCompress(&mut &*data, &mut out, &params).unwrap();
     out
 }
+*/
