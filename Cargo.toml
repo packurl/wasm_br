@@ -6,7 +6,7 @@ authors = ["Jerome David <programingjd@gmail.com>"]
 categories = ["wasm","compression"]
 description = "esm modules for brotli compression and/or decompression, with sync and async (worker) versions"
 keywords = ["wasm", "brotli", "br", "esm"]
-license = "GPL-3"
+license = "GPL-3.0-or-later"
 repository = "https://github.com/packurl/wasm_br"
 include = [
     "Cargo.toml", "src", "LICENSE", "README.md", "rust-toolchain.toml",
